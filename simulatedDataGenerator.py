@@ -12,10 +12,10 @@ import networkx as nx
 
 def main():
     print("Netflow Data Simulation\n")
-    start_datetime = input("Input start date in this format dd/mm/yyyy HH:MM: ") #"23/6/2020 11:00"
-    end_datetime = input("Input end date in this format DD/MM/YYYY HH:MM: ") #"24/6/2020 11:00"
-    total_entries = int(input("Input the number of entries: ")) #30000
-    total_ips = int(input("Input the total number of unique IP addresses: ")) #10000
+    start_datetime = "23/6/2020 11:00"
+    end_datetime = "24/6/2020 11:00"
+    total_entries = 30000
+    total_ips = 100
     start_datetimeObj, time_diff = timeline(start_datetime,end_datetime)            #get start time and total duration
     output = distribution(start_datetimeObj,time_diff)                              #get proportional distribution based on total duration
     entry_count = entryAllocation(total_entries, output, time_diff)                 #get list of entries per min interval based on distribution
@@ -128,7 +128,11 @@ def timestamp_generator(entry_count,start_datetimeObj): #generate the timestamp 
     return timestamp_total
 
 def ip_generator(total_ips, entry_count): #generate ips based on a fixed pool of unique ip addresses (pool size can be configurable by user)
+
+    data = pd.read_csv("majestic_million.csv") 
+    print(data.head())
     ip_pool=[]
+    dic = {}
     sourceIp_pool=[]
     destinationIp_pool=[]
     for i in range(total_ips):
