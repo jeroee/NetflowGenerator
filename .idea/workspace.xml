@@ -3,7 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="07421054-de8b-47f9-8575-7589c4973a4a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portList.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/simulatedDataGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulatedDataGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulated_data_2362020_1100_to_2462020_1100.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator/majestic_million.csv" beforeDir="false" afterPath="$PROJECT_DIR$/majestic_million.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator/simulatedDataGenerator.py" beforeDir="false" afterPath="$PROJECT_DIR$/simulator/simulatedDataGenerator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/simulator/simulated_data_2362020_1100_to_2462020_1100.csv" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/simulatedDataGenerator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="198" column="135" selection-start-line="198" selection-start-column="135" selection-end-line="198" selection-end-column="135" />
+            <state relative-caret-position="340">
+              <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="4" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
                 <element signature="e#10199#38240#0" />
@@ -27,10 +33,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/portList.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="68">
+                <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -51,6 +60,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/portList.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/simulator/simulatedDataGenerator.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/venv/test.py" />
         <option value="$PROJECT_DIR$/simulatedDataGenerator.py" />
       </list>
     </option>
@@ -76,6 +89,15 @@
               <item name="netflowGenerator" type="b2602c69:ProjectViewProjectNode" />
               <item name="netflowGenerator" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="netflowGenerator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="netflowGenerator" type="462c0819:PsiDirectoryNode" />
+              <item name="simulator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="netflowGenerator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -87,6 +109,9 @@
     <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jeroe\PycharmProjects\netflowGenerator\simulator" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jeroe\PycharmProjects\netflowGenerator" />
     </key>
@@ -125,6 +150,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="simulatedDataGenerator (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="NetflowGenerator" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/simulator" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simulator/simulatedDataGenerator.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="simulatedDataGenerator" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="NetflowGenerator" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -146,9 +192,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="NetflowGenerator" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.simulatedDataGenerator" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.simulatedDataGenerator (1)" />
         <item itemvalue="Python.portList" />
       </list>
     </recent_temporary>
@@ -175,8 +244,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.38678223" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.44637054" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -190,6 +259,23 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/majestic_million.csv">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/simulator/majestic_million.csv">
+      <provider selected="true" editor-type-id="LargeFileEditor">
+        <state relative-caret-position="306">
+          <caret line="18" column="81" lean-forward="true" selection-start-line="18" selection-start-column="81" selection-end-line="18" selection-end-column="81" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/portList.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -197,10 +283,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="68">
+            <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/simulator/simulatedDataGenerator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1775">
+          <caret line="284" lean-forward="true" selection-start-line="284" selection-end-line="284" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/simulatedDataGenerator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="198" column="135" selection-start-line="198" selection-start-column="135" selection-end-line="198" selection-end-column="135" />
+        <state relative-caret-position="340">
+          <caret line="35" column="4" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="4" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
             <element signature="e#10199#38240#0" />

@@ -16,24 +16,24 @@ def main():
     start_datetime = "23/6/2020 11:00"
     end_datetime = "23/6/2020 13:00"
     total_entries = 3000
-    total_ips = 10000
+    total_ips = 300
     # ------------------------------------------------------------------------------------
 
     start_datetimeObj, time_diff = timeline(start_datetime,end_datetime)            #get start time and total duration
     output = distribution(start_datetimeObj,time_diff)                              #get proportional distribution based on total duration
     entry_count = entryAllocation(total_entries, output, time_diff)                 #get list of entries per min interval based on distribution
     timestamp = timestamp_generator(entry_count,start_datetimeObj)                  #generating timestamp for entries based on number of entries per min
-    source_IP, destination_IP = ip_generator(total_ips,entry_count)                 #generating source IPs and destination IPs based on an ip pool
+    source_IP, destination_IP, source_domainName, destination_domainName = IP_domainName_generator(total_ips, entry_count)              #generating source IPs and destination IPs based on an ip pool
     protocols = protocol_generator(entry_count)                                     #generating protocols
     bytes, packets = bytes_packets_generator(entry_count)                           #generating packets and bytes
     source_port, destination_port = ports(entry_count)
-    df = simulate_data(bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp)  #simulating data
+    df = simulate_data(bytes, packets, protocols, source_IP, source_domainName, source_port, destination_IP, destination_domainName, destination_port, timestamp)  #simulating data
 
 
     #comment off if you do not wish to view the scatter plot or the network graph
-    scatter_plot(output,entry_count,start_datetime,end_datetime,time_diff)          #illustrates the distribution of entry flows after rounding error
+    #scatter_plot(output,entry_count,start_datetime,end_datetime,time_diff)          #illustrates the distribution of entry flows after rounding error
     # network_graph(source_IP,destination_IP)                                       # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
-    #save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
+    save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
 
 
 def save_csv(df,start_datetime,end_datetime):    #saves simulated dataframe into a csv file
@@ -132,25 +132,51 @@ def timestamp_generator(entry_count,start_datetimeObj): #generate the timestamp 
         timestamp_total = timestamp_total + timestamp
     return timestamp_total
 
-def ip_generator(total_ips, entry_count): #generate ips based on a fixed pool of unique ip addresses (pool size can be configurable by user)
+def dga():          #generating a string of random characters as domain names
+    generatedDomain = ''
+    chracters = 'qwertyuiopasdfghjklzxcvbnm1234567890'
+    length = random.randint(5,10)
+    for i in range(length):
+        generatedDomain = generatedDomain + (random.choice(chracters))
+    print('random is: ',generatedDomain)
+    return generatedDomain
 
-    data = pd.read_csv("majestic_million.csv") 
-    print(data.head())
-    ip_pool=[]
-    dic = {}
-    sourceIp_pool=[]
-    destinationIp_pool=[]
+def IP_domainName_generator(total_ips, entry_count):
+    domainDic = {}
+    sourceIp_pool = []
+    destinationIp_pool = []
+    sourceDomain_pool = []
+    destinationDomain_pool = []
+
+    # legitmate domain names taken from: https://majestic.com/reports/majestic-million
+    data = pd.read_csv("majestic_million.csv")
+    domainNamesFullList = data.Domain.tolist()
+    domainNamesFullList = list(set(domainNamesFullList))        #to remove any potential duplicates
     for i in range(total_ips):
-        ip_pool.append(socket.inet_ntoa(struct.pack('>I', random.randint(1, 0xffffffff))))
+        ipNum = socket.inet_ntoa(
+            struct.pack('>I', random.randint(1, 0xffffffff)))   # obtaining a random IP
+        randInt = random.randint(0, len(domainNamesFullList))   # obtaining a random domain name from csv
+        name = domainNamesFullList[randInt]
+        domainDic[ipNum] = name                                 # assigning a domain name to a IP address
+
+    keys = list(domainDic.keys())
+    for i in range(10):                                         # swapping first 10 dictionary values to DGA
+        domainDic[keys[i]] = dga() + "DGA" + ".com"             # added DGA for easier locating of fake domain names (can remove)
+
     for i in range(sum(entry_count)):
-        source = random.choice(ip_pool)
-        destination = random.choice(ip_pool)
-        while source == destination:
-            source = random.choice(ip_pool)
-            destination = random.choice(ip_pool)
-        sourceIp_pool.append(source)
-        destinationIp_pool.append(destination)
-    return sourceIp_pool, destinationIp_pool
+        sourceIP = random.choice(list(domainDic))
+        destinationIP = random.choice(list(domainDic))
+        while sourceIP == destinationIP:
+            sourceIP = random.choice(list(domainDic))
+            destinationIP = random.choice(list(domainDic))
+        sourceDomainName = domainDic[sourceIP]
+        destinationDomainName = domainDic[destinationIP]
+        sourceIp_pool.append(sourceIP)
+        destinationIp_pool.append(destinationIP)
+        sourceDomain_pool.append(sourceDomainName)
+        destinationDomain_pool.append(destinationDomainName)
+
+    return sourceIp_pool, destinationIp_pool, sourceDomain_pool, destinationDomain_pool
 
 def protocol_generator(entry_count): #generate protocol (Random)
     protocols=[]
@@ -195,14 +221,12 @@ def ports(entry_count):
 
 
 
-
-def simulate_data(bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp):  #simulate data and generate into a dataframe
-    df = pd.DataFrame(np.array([bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp]).transpose(),\
-                               columns=['bytes', 'packets', 'protocol', 'source IP','destination IP','source port', 'destination port','timestamp'])
+def simulate_data(bytes, packets, protocols, source_IP, source_domainName, source_port, destination_IP, destination_domainName, destination_port, timestamp):  #simulate data and generate into a dataframe
+    df = pd.DataFrame(np.array([bytes, packets, protocols, source_IP, source_domainName, source_port, destination_IP, destination_domainName, destination_port, timestamp]).transpose(),\
+                               columns=['bytes', 'packets', 'protocol', 'source IP','source domain name','source port','destination IP','destination domain name', 'destination port','timestamp'])
     pd.set_option('display.max_columns', None)
     print("Displaying first 10 entries of dataframe for viewing")
-    print(df.head(100))
-    print(df.dtypes)
+    print(df.head(20))
     return df
 
 

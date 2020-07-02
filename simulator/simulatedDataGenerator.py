@@ -15,7 +15,7 @@ def main():
     start_datetime = "23/6/2020 11:00"
     end_datetime = "24/6/2020 11:00"
     total_entries = 30000
-    total_ips = 100
+    total_ips = 150
     start_datetimeObj, time_diff = timeline(
         start_datetime, end_datetime)  # get start time and total duration
     # get proportional distribution based on total duration
@@ -25,9 +25,10 @@ def main():
     # generating timestamp for entries based on number of entries per min
     timestamp = timestamp_generator(entry_count, start_datetimeObj)
     # generating source IPs and destination IPs based on an ip pool
-    source_IP, destination_IP, domainDic = ip_generator(total_ips, entry_count)
-    source_domainList, destination_domainList = domain_generator(
-        source_IP, destination_IP, domainDic)
+    source_IP, destination_IP, source_domainList, destination_domainList = IP_domainName_generator(total_ips, entry_count)
+    # source_IP, destination_IP, domainDic = ip_generator(total_ips, entry_count)
+    # source_domainList, destination_domainList = domain_generator(
+    #     source_IP, destination_IP, domainDic)
     protocols = protocol_generator(entry_count)  # generating protocols
     bytes, packets = bytes_packets_generator(
         entry_count)  # generating packets and bytes
@@ -163,55 +164,92 @@ def timestamp_generator(entry_count, start_datetimeObj):
     return timestamp_total
 
 
-# generate ips based on a fixed pool of unique ip addresses (pool size can be configurable by user)
-def ip_generator(total_ips, entry_count):
-
-    data = pd.read_csv("majestic_million.csv")
-    domainNamesFullList = data.Domain.tolist()
-    print("type of domainNames")
-    ip_pool = []
+def IP_domainName_generator(total_ips, entry_count):
     domainDic = {}
     sourceIp_pool = []
     destinationIp_pool = []
+    sourceDomain_pool = []
+    destinationDomain_pool = []
+
+    data = pd.read_csv("majestic_million.csv")
+    domainNamesFullList = data.Domain.tolist()
     for i in range(total_ips):
         ipNum = socket.inet_ntoa(
-            struct.pack('>I', random.randint(1, 0xffffffff)))
-        ip_pool.append(ipNum)
-        randInt = random.randint(0, len(domainNamesFullList))
+            struct.pack('>I', random.randint(1, 0xffffffff)))  # obtaining a random IP
+        randInt = random.randint(0, len(domainNamesFullList))  # obtaining a random domain name from csv
         name = domainNamesFullList[randInt]
-        while name in list(domainDic.values()):
-            randInt = random.randint(0, len(domainNamesFullList))
-            name = domainNamesFullList[randInt]
-        domainDic[ipNum] = name
-
-    for i in range(sum(entry_count)):
-        source = random.choice(ip_pool)
-        destination = random.choice(ip_pool)
-        while source == destination:
-            source = random.choice(ip_pool)
-            destination = random.choice(ip_pool)
-        sourceIp_pool.append(source)
-        destinationIp_pool.append(destination)
-    return sourceIp_pool, destinationIp_pool, domainDic
-
-
-# generating the domain names based on source IP and dest IP list
-def domain_generator(source_IP, destination_IP, domainDic):
-    source_domainList = []
-    destination_domainList = []
-    randInt = 10  # random num of dga
-    print("DOMAINDIC")
+        domainDic[ipNum] = name  # assigning a IP to the a domain name
 
     keys = list(domainDic.keys())
-    for i in range(randInt):
+    for i in range(10):  # swapping first 10 dictionary values to DGA
         domainDic[keys[i]] = "DGA"
 
-    for i in source_IP:
-        source_domainList.append(domainDic[i])
-    for j in destination_IP:
-        destination_domainList.append(domainDic[i])
+    for i in range(sum(entry_count)):
+        sourceIP = random.choice(list(domainDic))
+        destinationIP = random.choice(list(domainDic))
+        while sourceIP == destinationIP:
+            sourceIP = random.choice(list(domainDic))
+            destinationIP = random.choice(list(domainDic))
+        sourceDomainName = domainDic[sourceIP]
+        destinationDomainName = domainDic[destinationIP]
+        sourceIp_pool.append(sourceIP)
+        destinationIp_pool.append(destinationIP)
+        sourceDomain_pool.append(sourceDomainName)
+        destinationDomain_pool.append(destinationDomainName)
 
-    return source_domainList, destination_domainList
+    return sourceIp_pool, destinationIp_pool, sourceDomain_pool, destinationDomain_pool
+
+
+# generate ips based on a fixed pool of unique ip addresses (pool size can be configurable by user)
+# def ip_generator(total_ips, entry_count):
+#     data = pd.read_csv("majestic_million.csv")
+#     domainNamesFullList = data.Domain.tolist()
+#     print("type of domainNames")
+#     domainNamesFullList = list(set(domainNamesFullList))  #to remove any duplicates
+#     domainDic = {}
+#     sourceIp_pool = []
+#     destinationIp_pool = []
+#     for i in range(total_ips):
+#         ipNum = socket.inet_ntoa(
+#             struct.pack('>I', random.randint(1, 0xffffffff)))
+#         randInt = random.randint(0, len(domainNamesFullList))
+#         name = domainNamesFullList[randInt]
+#         domainDic[ipNum] = name
+#
+#     for i in range(sum(entry_count)):
+#         source = random.choice(list(domainDic))
+#         destination = random.choice(list(domainDic))
+#         while source == destination:
+#             source = random.choice(list(domainDic))
+#             destination = random.choice(list(domainDic))
+#         sourceIp_pool.append(source)
+#         destinationIp_pool.append(destination)
+#     print(sourceIp_pool)
+#     print(destinationIp_pool)
+#     print(domainDic)
+#     return sourceIp_pool, destinationIp_pool, domainDic
+#
+#
+# # generating the domain names based on source IP and dest IP list
+# def domain_generator(source_IP, destination_IP, domainDic):
+#     source_domainList = []
+#     destination_domainList = []
+#     randInt = 10  # random num of dga
+#     print("DOMAINDIC")
+#
+#     keys = list(domainDic.keys())
+#     for i in range(randInt):
+#         domainDic[keys[i]] = "DGA"
+#
+#     print("after swapping")
+#     print(domainDic)
+#
+#     for i in source_IP:
+#         source_domainList.append(domainDic[i])
+#     for j in destination_IP:
+#         destination_domainList.append(domainDic[i])
+#
+#     return source_domainList, destination_domainList
 
 
 def protocol_generator(entry_count):  # generate protocol (Random)
@@ -242,7 +280,7 @@ def simulate_data(bytes, packets, protocols, source_IP, destination_IP, timestam
                       columns=['bytes', 'packets', 'protocol', 'sourceIP', 'Destination IP', 'timestamp', 'source_domainList', 'destination_domainList'])
     pd.set_option('display.max_columns', None)
     print("Displaying first 10 entries of dataframe for viewing")
-    print(df.head(1000))
+    # print(df.head(1000))
     return df
 
 # distribution of flows based on proportion in a 24hr time period 1100-1100
