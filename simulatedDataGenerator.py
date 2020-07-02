@@ -33,7 +33,7 @@ def main():
     #comment off if you do not wish to view the scatter plot or the network graph
     #scatter_plot(output,entry_count,start_datetime,end_datetime,time_diff)          #illustrates the distribution of entry flows after rounding error
     # network_graph(source_IP,destination_IP)                                       # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
-    save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
+    #save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
 
 
 def save_csv(df,start_datetime,end_datetime):    #saves simulated dataframe into a csv file
@@ -149,7 +149,7 @@ def IP_domainName_generator(total_ips, entry_count):
     destinationDomain_pool = []
 
     # legitmate domain names taken from: https://majestic.com/reports/majestic-million
-    data = pd.read_csv("majestic_million.csv")
+    data = pd.read_csv("referrals/majestic_million.csv")
     domainNamesFullList = data.Domain.tolist()
     domainNamesFullList = list(set(domainNamesFullList))        #to remove any potential duplicates
     for i in range(total_ips):
@@ -199,7 +199,7 @@ def bytes_packets_generator(entry_count):  #generate byes and packets  (Random)
 
 # csv file containing all port numbers are taken from: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
 def ports(entry_count):
-    df = pd.read_csv('service-names-port-numbers.csv')
+    df = pd.read_csv('referrals/service-names-port-numbers.csv')
     df = df['Port Number'].dropna().drop_duplicates()  #removing NA values and duplicates
     df = df[df.str.contains('-') == False]             #removing range of port numbers (they are unsused or reserved)
     port_list = []
