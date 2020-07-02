@@ -133,7 +133,11 @@ def timestamp_generator(entry_count,start_datetimeObj): #generate the timestamp 
     return timestamp_total
 
 def ip_generator(total_ips, entry_count): #generate ips based on a fixed pool of unique ip addresses (pool size can be configurable by user)
+
+    data = pd.read_csv("majestic_million.csv") 
+    print(data.head())
     ip_pool=[]
+    dic = {}
     sourceIp_pool=[]
     destinationIp_pool=[]
     for i in range(total_ips):
