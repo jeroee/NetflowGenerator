@@ -12,10 +12,13 @@ import networkx as nx
 
 def main():
     print("Netflow Data Simulation\n")
+    # ------------------------- Configurable parameters ----------------------------------
     start_datetime = "23/6/2020 11:00"
-    end_datetime = "24/6/2020 11:00"
-    total_entries = 30000
-    total_ips = 100
+    end_datetime = "23/6/2020 13:00"
+    total_entries = 3000
+    total_ips = 10000
+    # ------------------------------------------------------------------------------------
+
     start_datetimeObj, time_diff = timeline(start_datetime,end_datetime)            #get start time and total duration
     output = distribution(start_datetimeObj,time_diff)                              #get proportional distribution based on total duration
     entry_count = entryAllocation(total_entries, output, time_diff)                 #get list of entries per min interval based on distribution
@@ -23,12 +26,14 @@ def main():
     source_IP, destination_IP = ip_generator(total_ips,entry_count)                 #generating source IPs and destination IPs based on an ip pool
     protocols = protocol_generator(entry_count)                                     #generating protocols
     bytes, packets = bytes_packets_generator(entry_count)                           #generating packets and bytes
-    df = simulate_data(bytes,packets,protocols,source_IP,destination_IP,timestamp)  #simulating data
+    source_port, destination_port = ports(entry_count)
+    df = simulate_data(bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp)  #simulating data
 
-    #uncomment if you do not wish to view the scatter plot or the network graph
+
+    #comment off if you do not wish to view the scatter plot or the network graph
     scatter_plot(output,entry_count,start_datetime,end_datetime,time_diff)          #illustrates the distribution of entry flows after rounding error
-    # network_graph(source_IP,destination_IP)                                         # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
-    save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
+    # network_graph(source_IP,destination_IP)                                       # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
+    #save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
 
 
 def save_csv(df,start_datetime,end_datetime):    #saves simulated dataframe into a csv file
@@ -121,7 +126,7 @@ def timestamp_generator(entry_count,start_datetimeObj): #generate the timestamp 
         timestamp=[]
         for i in range(entry_count[i]):
                 time = time_start + timedelta(milliseconds=randrange(60000))
-                time = time.strftime('%d/%m/%Y %H:%M:%S.%f')[:-3]
+                #time = time.strftime('%d/%m/%Y %H:%M:%S.%f')[:-3]   #convert datetime to string
                 timestamp.append(time)
         timestamp.sort()
         timestamp_total = timestamp_total + timestamp
@@ -166,13 +171,40 @@ def bytes_packets_generator(entry_count):  #generate byes and packets  (Random)
         packets.append(packet)
     return bytes, packets
 
-def simulate_data(bytes,packets,protocols,source_IP,destination_IP,timestamp):  #simulate data and generate into a dataframe
-    df = pd.DataFrame(np.array([bytes,packets,protocols,source_IP,destination_IP,timestamp]).transpose(),\
-                               columns=['bytes', 'packets', 'protocol', 'sourceIP','Destination IP','timestamp'])
+# csv file containing all port numbers are taken from: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
+def ports(entry_count):
+    df = pd.read_csv('service-names-port-numbers.csv')
+    df = df['Port Number'].dropna().drop_duplicates()  #removing NA values and duplicates
+    df = df[df.str.contains('-') == False]             #removing range of port numbers (they are unsused or reserved)
+    port_list = []
+    for i in df:
+        port_list.append(int(i))
+    port_list.remove(80)
+    port_list.remove(443)
+    port_list.insert(0, 443)
+    port_list.insert(0, 80)
+    weights = []
+    weights.append(12350)               #weight of 80
+    weights.append(12350)               #weight of 443
+    for i in range(6175):
+        weights.append(1)               #weight of other port numbers
+    weights = tuple(weights)            # set probability of getting port 80 and 443 to be 40% each
+    source_port = random.choices(port_list, weights=weights, k=sum(entry_count))
+    destination_port = random.choices(port_list, weights=weights,k=sum(entry_count))
+    return source_port, destination_port
+
+
+
+
+def simulate_data(bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp):  #simulate data and generate into a dataframe
+    df = pd.DataFrame(np.array([bytes,packets,protocols,source_IP,destination_IP, source_port, destination_port,timestamp]).transpose(),\
+                               columns=['bytes', 'packets', 'protocol', 'source IP','destination IP','source port', 'destination port','timestamp'])
     pd.set_option('display.max_columns', None)
     print("Displaying first 10 entries of dataframe for viewing")
-    print(df.head(10))
+    print(df.head(100))
+    print(df.dtypes)
     return df
+
 
 # distribution of flows based on proportion in a 24hr time period 1100-1100
 def distribution_24hr():
