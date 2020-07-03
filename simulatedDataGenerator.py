@@ -16,14 +16,16 @@ def main():
     start_datetime = "23/6/2020 11:00"
     end_datetime = "23/6/2020 13:00"
     total_entries = 3000
-    total_ips = 300
+    unique_ips = 500                                # number of unique IP addresses
+    fake_domain = 10                                # nubmer of IP addresses belonging to malicious domains
+    no_domain = 10                                  # number of IP addresses not registered with DNS
     # ------------------------------------------------------------------------------------
 
     start_datetimeObj, time_diff = timeline(start_datetime,end_datetime)            #get start time and total duration
     output = distribution(start_datetimeObj,time_diff)                              #get proportional distribution based on total duration
     entry_count = entryAllocation(total_entries, output, time_diff)                 #get list of entries per min interval based on distribution
     timestamp = timestamp_generator(entry_count,start_datetimeObj)                  #generating timestamp for entries based on number of entries per min
-    source_IP, destination_IP, source_domainName, destination_domainName = IP_domainName_generator(total_ips, entry_count)              #generating source IPs and destination IPs based on an ip pool
+    source_IP, destination_IP, source_domainName, destination_domainName = IP_domainName_generator(unique_ips, entry_count, fake_domain, no_domain)              #generating source IPs and destination IPs based on an ip pool
     protocols = protocol_generator(entry_count)                                     #generating protocols
     bytes, packets = bytes_packets_generator(entry_count)                           #generating packets and bytes
     source_port, destination_port = ports(entry_count)
@@ -32,7 +34,7 @@ def main():
 
     #comment off if you do not wish to view the scatter plot or the network graph
     #scatter_plot(output,entry_count,start_datetime,end_datetime,time_diff)          #illustrates the distribution of entry flows after rounding error
-    # network_graph(source_IP,destination_IP)                                       # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
+    # network_graph(source_IP,destination_IP)                                        # shows the relationship between network of IPS communicating via a network graph (might take a long time to generate the graph)
     #save_csv(df,start_datetime,end_datetime)                                        #saves simulated dataframe into a csv file
 
 
@@ -141,7 +143,7 @@ def dga():          #generating a string of random characters as domain names
     print('random is: ',generatedDomain)
     return generatedDomain
 
-def IP_domainName_generator(total_ips, entry_count):
+def IP_domainName_generator(total_ips, entry_count, fake_domain, no_domain):
     domainDic = {}
     sourceIp_pool = []
     destinationIp_pool = []
@@ -160,8 +162,11 @@ def IP_domainName_generator(total_ips, entry_count):
         domainDic[ipNum] = name                                 # assigning a domain name to a IP address
 
     keys = list(domainDic.keys())
-    for i in range(10):                                         # swapping first 10 dictionary values to DGA
+    for i in range(fake_domain):                                # swapping first x dictionary values to DGA where x is the number of fake domains
         domainDic[keys[i]] = dga() + "DGA" + ".com"             # added DGA for easier locating of fake domain names (can remove)
+
+    for i in range(fake_domain, fake_domain+no_domain):         # swapping next y dictionary values to Nan values where y is the number of unregistered IP addresses without a domain name
+        domainDic[keys[i]] = np.nan
 
     for i in range(sum(entry_count)):
         sourceIP = random.choice(list(domainDic))
