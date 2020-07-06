@@ -9,7 +9,6 @@ import socket
 import struct
 import math
 import networkx as nx
-import pandas as pd
 
 
 def main():
@@ -42,7 +41,7 @@ def main():
     protocols = protocol_generator(entry_count)  # generating protocols
     bytes, packets = bytes_packets_generator(
         entry_count)  # generating packets and bytes
-    source_port, destination_port = ports(entry_count)
+    source_port, destination_port = ports(entry_count, sqlContext)
 
     df = simulate_data(sc, sqlContext, bytes, packets, protocols, source_IP, source_domainName, source_port,
                        destination_IP, destination_domainName, destination_port, timestamp)  # simulating data
@@ -194,13 +193,11 @@ def IP_domainName_generator(total_ips, entry_count, fake_domain, no_domain, sqlC
     data = sqlContext.read.format('com.databricks.spark.csv') \
         .options(header='true', inferschema='true') \
         .load("referrals/majestic_million.csv")
-    print("SPARK DOMAIN GENERATOR")
-    data.printSchema()
+    # print("SPARK DOMAIN GENERATOR")
+    # data.printSchema()
 
     domainNamesFullList = data.select(
         "Domain").rdd.flatMap(lambda x: x).collect()
-    print("SPARK DOMAIN LIST    ")
-    print(domainNamesFullList[1:3])
     # to remove any potential duplicates
     domainNamesFullList = list(set(domainNamesFullList))
     for i in range(total_ips):
@@ -262,15 +259,35 @@ def bytes_packets_generator(entry_count):
 # csv file containing all port numbers are taken from: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xml
 
 
-def ports(entry_count):
-    df = pd.read_csv('referrals/service-names-port-numbers.csv')
+def ports(entry_count, sqlContext):
+    data = sqlContext.read.format('com.databricks.spark.csv') \
+        .options(header='true', inferschema='true') \
+        .load('referrals/service-names-port-numbers.csv')
+    # print("SPARK PORTS GENERATOR")
+
+    df = data.select(
+        "Port Number").rdd.flatMap(lambda x: x).collect()
+
     # removing NA values and duplicates
-    df = df['Port Number'].dropna().drop_duplicates()
-    # removing range of port numbers (they are unsused or reserved)
-    df = df[df.str.contains('-') == False]
+
+    df = [val for val in df if str(val) != 'nan']
+    df = list(dict.fromkeys(df))
     port_list = []
+
+    def isInt(value):
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
+
     for i in df:
-        port_list.append(int(i))
+        # removing range of port numbers (they are unsused or reserved)
+        if i != None and isInt(i):
+            port_list.append(int(i))
+
+    # print("PORT LIST")
+    # print(port_list)
     port_list.remove(80)
     port_list.remove(443)
     port_list.insert(0, 443)
