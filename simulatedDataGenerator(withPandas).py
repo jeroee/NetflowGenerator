@@ -212,6 +212,7 @@ def ports(entry_count):
     port_list.remove(443)
     port_list.insert(0, 443)
     port_list.insert(0, 80)
+    print('length is: ', len(port_list))
     weights = []
     weights.append(12350)               #weight of 80
     weights.append(12350)               #weight of 443

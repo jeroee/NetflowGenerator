@@ -12,7 +12,7 @@ import networkx as nx
 
 
 def main():
-    print("Netflow Data Simulation\n")
+    print("Netflow Data Simulation with Pyspark\n")
     # ------------------------- Configurable parameters ----------------------------------
     start_datetime = "23/6/2020 11:00"
     end_datetime = "23/6/2020 13:00"
@@ -193,8 +193,7 @@ def IP_domainName_generator(total_ips, entry_count, fake_domain, no_domain, sqlC
     data = sqlContext.read.format('com.databricks.spark.csv') \
         .options(header='true', inferschema='true') \
         .load("referrals/majestic_million.csv")
-    # print("SPARK DOMAIN GENERATOR")
-    # data.printSchema()
+
 
     domainNamesFullList = data.select(
         "Domain").rdd.flatMap(lambda x: x).collect()
@@ -266,7 +265,7 @@ def ports(entry_count, sqlContext):
     # print("SPARK PORTS GENERATOR")
 
     df = data.select(
-        "Port Number").rdd.flatMap(lambda x: x).collect()
+        "Port Number").rdd.flatMap(lambda x: x).collect()           # convert every row to an item on a list
 
     # removing NA values and duplicates
 
@@ -285,9 +284,6 @@ def ports(entry_count, sqlContext):
         # removing range of port numbers (they are unsused or reserved)
         if i != None and isInt(i):
             port_list.append(int(i))
-
-    # print("PORT LIST")
-    # print(port_list)
     port_list.remove(80)
     port_list.remove(443)
     port_list.insert(0, 443)
@@ -327,7 +323,6 @@ def simulate_data(sc, sqlContext, bytes, packets, protocols, source_IP, source_d
                    df.source_port, df.destination_IP, df.destination_domainName, df.destination_port, df.timestamp)
     print("Displaying first 20 rows of Pyspark Dataframe")
     df.show(20, truncate=False)
-    df.printSchema()
     return df
 
 
